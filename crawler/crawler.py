@@ -13,8 +13,8 @@ dataset = {
 class VagalumeCrawler(scrapy.Spider):
     name = 'vagalume'
     start_urls = [
-        'https://www.vagalume.com.br/browse/style/axe.html',
-        ]
+        'https://www.vagalume.com.br/browse/style/musicas-gauchas.html',
+    ]
     
     def parse(self, response):
         global dataset
@@ -23,18 +23,9 @@ class VagalumeCrawler(scrapy.Spider):
         for column in response.css('.namesColumn'):
             for line in column.css('li'):
                 artists_urls.append(line.css('a::attr(href)').extract_first())
-        '''
-        artist = { 
-            'artist_name': artists_names,
-            'artist_url': artists_urls,
-            'artist_genre': genre
-        }
-        pd.DataFrame(artist).to_csv('artists_{}.csv'.format(genre), index=False)
-        '''        
+        
         for artist_url in artists_urls:
             yield response.follow(url=artist_url, callback=self.parser_artist, meta={'genre':genre})
-
-        pd.DataFrame(dataset).to_csv('vagalume.csv', index=False)
 
     def parser_artist(self, response):
         artist_url = response.url
@@ -47,13 +38,15 @@ class VagalumeCrawler(scrapy.Spider):
     
     def parse_music(self, response):
         global dataset
-        dataset['artist_name'].append(response.css('.col1-2-1 h2::text').extract_first())
+        dataset['artist_name'].append(response.css('.col1-2-1 h2 a::text').extract_first())
         dataset['music_name'].append(response.css('.col1-2-1 h1::text').extract_first())
         dataset['music_lyric'].append('\n'.join(response.css('.col1-2-1 #lyrics::text').extract()))
         dataset['genre'].append(response.meta['genre'])
         dataset['language'] = detect(' '.join(response.css('.col1-2-1 #lyrics::text').extract()))
 
-        
+    def closed(self, reason):
+        global dataset
+        pd.DataFrame(dataset).to_csv('vagalume.csv', index=False)
 
 
         
