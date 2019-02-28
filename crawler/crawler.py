@@ -13,7 +13,20 @@ dataset = {
 class VagalumeCrawler(scrapy.Spider):
     name = 'vagalume'
     start_urls = [
-        'https://www.vagalume.com.br/browse/style/musicas-gauchas.html',
+        'https://www.vagalume.com.br/browse/style/axe.html',
+        'https://www.vagalume.com.br/browse/style/bossa-nova.html',
+        'https://www.vagalume.com.br/browse/style/forro.html',
+        'https://www.vagalume.com.br/browse/style/funk-carioca.html',
+        'https://www.vagalume.com.br/browse/style/gospel.html',
+        'https://www.vagalume.com.br/browse/style/infantil.html',
+        'https://www.vagalume.com.br/browse/style/jovem-guarda.html',
+        'https://www.vagalume.com.br/browse/style/mpb.html',
+        'https://www.vagalume.com.br/browse/style/pagode.html',
+        'https://www.vagalume.com.br/browse/style/samba.html',
+        'https://www.vagalume.com.br/browse/style/sertanejo.html',
+        'https://www.vagalume.com.br/browse/style/velha-guarda.html',
+        'https://www.vagalume.com.br/browse/style/pop.html',
+        'https://www.vagalume.com.br/browse/style/rock.html'
     ]
     
     def parse(self, response):
