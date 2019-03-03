@@ -4,7 +4,7 @@ import pandas as pd
 dataset = {
     'artist_name': [],
     'genre': [],
-    'music_tite': [],
+    'music_title': [],
     'music_lyric': []
 }
 
