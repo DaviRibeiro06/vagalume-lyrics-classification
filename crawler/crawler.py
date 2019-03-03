@@ -1,13 +1,12 @@
 import scrapy
 import pandas as pd
-from langdetect import detect
+# from langdetect import detect
 
 dataset = {
     'artist_name': [],
-    'music_name': [],
     'genre': [],
-    'music_lyric': [],
-    'language': []
+    'music_tite': [],
+    'music_lyric': []
 }
 
 class VagalumeCrawler(scrapy.Spider):
@@ -51,15 +50,13 @@ class VagalumeCrawler(scrapy.Spider):
     
     def parse_music(self, response):
         global dataset
-        dataset['artist_name'].append(response.css('.col1-2-1 h2 a::text').extract_first())
-        dataset['music_name'].append(response.css('.col1-2-1 h1::text').extract_first())
-        dataset['music_lyric'].append('\n'.join(response.css('.col1-2-1 #lyrics::text').extract()))
-        dataset['genre'].append(response.meta['genre'])
-        dataset['language'] = detect(' '.join(response.css('.col1-2-1 #lyrics::text').extract()))
+        if response.css('.langBg-bra').extract_first() == None:
+            dataset['artist_name'].append(response.css('.col1-2-1 h2 a::text').extract_first())
+            dataset['music_title'].append(response.css('.col1-2-1 h1::text').extract_first())
+            dataset['music_lyric'].append('\n'.join(response.css('.col1-2-1 #lyrics::text').extract()))
+            dataset['genre'].append(response.meta['genre'])
+            # dataset['language'] = detect(' '.join(response.css('.col1-2-1 #lyrics::text').extract()))
 
     def closed(self, reason):
         global dataset
         pd.DataFrame(dataset).to_csv('vagalume.csv', index=False)
-
-
-        
