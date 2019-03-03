@@ -1,6 +1,5 @@
 import scrapy
 import pandas as pd
-# from langdetect import detect
 
 dataset = {
     'artist_name': [],
@@ -8,6 +7,15 @@ dataset = {
     'music_tite': [],
     'music_lyric': []
 }
+
+def is_portuguese(response):
+    for option in response.css('#songTab li'):
+        if option.css('a::text').extract_first().strip() == 'Original' and option.css('a i').xpath('@class').extract_first().strip() != 'lang langBg-bra':
+            return False
+    return True
+
+def is_instrumental(response):
+    return response.css('.instrumental-icon').extract_first() != None
 
 class VagalumeCrawler(scrapy.Spider):
     name = 'vagalume'
@@ -50,12 +58,11 @@ class VagalumeCrawler(scrapy.Spider):
     
     def parse_music(self, response):
         global dataset
-        if response.css('.langBg-bra').extract_first() == None and response.css('.instrumental-icon').extract_first() == None:
-            dataset['artist_name'].append(response.css('.col1-2-1 h2 a::text').extract_first())
-            dataset['music_title'].append(response.css('.col1-2-1 h1::text').extract_first())
+        if is_portuguese(response) and not is_instrumental(response):
+            dataset['artist_name'].append(response.css('.col1-2-1 h2 a::text').extract_first().strip())
+            dataset['music_title'].append(response.css('.col1-2-1 h1::text').extract_first().strip())
             dataset['music_lyric'].append('\n'.join(response.css('.col1-2-1 #lyrics::text').extract()))
             dataset['genre'].append(response.meta['genre'])
-            # dataset['language'] = detect(' '.join(response.css('.col1-2-1 #lyrics::text').extract()))
 
     def closed(self, reason):
         global dataset
