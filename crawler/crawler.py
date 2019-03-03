@@ -50,7 +50,7 @@ class VagalumeCrawler(scrapy.Spider):
     
     def parse_music(self, response):
         global dataset
-        if response.css('.langBg-bra').extract_first() == None:
+        if response.css('.langBg-bra').extract_first() == None and response.css('.instrumental-icon').extract_first() == None:
             dataset['artist_name'].append(response.css('.col1-2-1 h2 a::text').extract_first())
             dataset['music_title'].append(response.css('.col1-2-1 h1::text').extract_first())
             dataset['music_lyric'].append('\n'.join(response.css('.col1-2-1 #lyrics::text').extract()))
