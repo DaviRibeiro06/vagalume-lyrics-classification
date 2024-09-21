@@ -33,7 +33,8 @@ class VagalumeCrawler(scrapy.Spider):
         'https://www.vagalume.com.br/browse/style/sertanejo.html',
         'https://www.vagalume.com.br/browse/style/velha-guarda.html',
         'https://www.vagalume.com.br/browse/style/pop.html',
-        'https://www.vagalume.com.br/browse/style/rock.html'
+        'https://www.vagalume.com.br/browse/style/rock.html',
+        'https://www.vagalume.com.br/browse/style/kizomba.html'
     ]
     
     def parse(self, response):
@@ -45,16 +46,15 @@ class VagalumeCrawler(scrapy.Spider):
                 artists_urls.append(line.css('a::attr(href)').extract_first())
         
         for artist_url in artists_urls:
-            yield response.follow(url=artist_url, callback=self.parser_artist, meta={'genre':genre})
+            yield response.follow(url=artist_url, callback=self.parser_artist, meta={'genre': genre})
 
     def parser_artist(self, response):
-        artist_url = response.url
         musics_urls = []
         for item_music in response.css('#alfabetMusicList li .flexSpcBet .lineColLeft'):
             musics_urls.append(item_music.css('a::attr(href)').extract_first())
 
         for music_url in musics_urls:
-            yield response.follow(url=music_url, callback=self.parse_music, meta={'genre':response.meta['genre']})
+            yield response.follow(url=music_url, callback=self.parse_music, meta={'genre': response.meta['genre']})
     
     def parse_music(self, response):
         global dataset
